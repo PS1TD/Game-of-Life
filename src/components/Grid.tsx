@@ -2,13 +2,38 @@ import React, { useEffect, useRef, useState } from "react"
 import Cell from "./Cell"
 
 export default function Grid() {
-	const [rows, setRows] = useState(10)
-	const [columns, setColumns] = useState(20)
+	const [windowSize, setWindowSize] = useState({
+		width: 0,
+		height: 0,
+	})
+
+	const [cellSize, setCellSize] = useState(50)
+
+	const [rows, setRows] = useState(Math.ceil(window.innerHeight / cellSize))
+	const [columns, setColumns] = useState(Math.ceil(window.innerWidth / cellSize))
 
 	const [grid, setGrid] = useState<Array<Array<boolean>>>(Array.from(Array(rows), () => Array(columns).fill(false)))
 
-	const rowLoader = useRef(null)
-	const columnLoader = useRef(null)
+	const rowLoader = useRef<HTMLDivElement>(null)
+	const columnLoader = useRef<HTMLDivElement>(null)
+
+	useEffect(() => {
+		function handleResize() {
+			setWindowSize({
+				width: window.innerWidth,
+				height: window.innerHeight,
+			})
+		}
+		window.addEventListener("resize", handleResize)
+		handleResize()
+		return () => window.removeEventListener("resize", handleResize)
+	}, [])
+
+	useEffect(() => {
+		console.log("WINDOW SIZE CHANGED")
+		setRows((rows) => Math.max(rows, Math.ceil(windowSize.height / cellSize)))
+		setColumns((columns) => Math.max(columns, Math.ceil(windowSize.width / cellSize)))
+	}, [windowSize])
 
 	useEffect(() => {
 		var options = {
@@ -18,32 +43,27 @@ export default function Grid() {
 		}
 		const observer = new IntersectionObserver(handleObserver, options)
 		if (rowLoader.current && columnLoader.current) {
-			observer.observe(rowLoader.current!)
-			observer.observe(columnLoader.current!)
+			observer.observe(rowLoader.current)
+			observer.observe(columnLoader.current)
 		}
 	}, [])
 
 	useEffect(() => {
-		console.log("ADD MORE ROWS")
 		const newGrid = Array.from(Array(rows), () => Array(columns).fill(false))
 		setGrid(newGrid)
 	}, [rows])
 
 	useEffect(() => {
-		console.log("ADD MORE COLUMNS")
 		const newGrid = Array.from(Array(rows), () => Array(columns).fill(false))
 		setGrid(newGrid)
 	}, [columns])
 
-	const handleObserver = (entities: any) => {
-		console.log(entities)
-		entities.forEach((entity: any) => {
+	const handleObserver = (entities: IntersectionObserverEntry[]) => {
+		entities.forEach((entity: IntersectionObserverEntry) => {
 			if (entity.isIntersecting) {
 				if (entity.target.id === "rowLoader") {
-					console.log("ROWS HIT")
 					setRows((rows) => rows + 10)
 				} else if (entity.target.id === "columnLoader") {
-					console.log("COLUMNS HIT")
 					setColumns((columns) => columns + 10)
 				}
 			}
@@ -52,7 +72,7 @@ export default function Grid() {
 
 	return (
 		<>
-			<div className="flex flex-col" style={{ width: `${columns * 100}px` }}>
+			<div className="flex flex-col" style={{ width: `${columns * cellSize}px` }}>
 				<div className="flex">
 					<div>
 						{grid.map((row, r) => {
@@ -61,7 +81,7 @@ export default function Grid() {
 									<div key={r} className="flex">
 										{row.map((cell, c) => {
 											{
-												return <Cell key={r + "-" + c} row={r} column={c} />
+												return <Cell key={r + "-" + c} row={r} column={c} size={cellSize} />
 											}
 										})}
 									</div>
