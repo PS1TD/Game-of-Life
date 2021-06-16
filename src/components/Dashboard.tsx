@@ -1,17 +1,45 @@
-import React from "react"
+import React, { useCallback, useEffect, useRef } from "react"
 import { useActions } from "../redux/hooks/useActions"
 import { useTypedSelector } from "../redux/hooks/useTypedSelector"
 
 export default function Dashboard() {
-	const { size } = useTypedSelector((state) => state.grid)
+	const { size, running } = useTypedSelector((state) => state.grid)
 
-	const { downsizeGrid, clearGrid } = useActions()
+	const { toggleRunning, downsizeGrid, clearGrid } = useActions()
+
+	const runningRef = useRef(running)
+	runningRef.current = running
+
+	const runSimulation = useCallback(() => {
+		if (!runningRef.current) {
+			return
+		}
+
+		console.log("1 SEC")
+
+		setTimeout(runSimulation, 1000)
+	}, [])
+
+	useEffect(() => {
+		if (running) {
+			runSimulation()
+		}
+	}, [])
 
 	return (
 		<div className="fixed bottom-0 w-full pointer-events-none">
 			<div className="flex justify-around mb-16">
-				<button onClick={() => console.log("CLICK")} className="bg-green-400 p-6 rounded-full pointer-events-auto">
-					START/STOP
+				<button
+					onClick={() => {
+						toggleRunning()
+						if (!running) {
+							runningRef.current = true
+							runSimulation()
+						}
+					}}
+					className="bg-green-400 p-6 rounded-full pointer-events-auto"
+				>
+					{running ? "STOP" : "START"}
 				</button>
 				<button onClick={() => clearGrid()} className="bg-red-400 p-6 rounded-full pointer-events-auto">
 					CLEAR

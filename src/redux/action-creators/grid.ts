@@ -50,3 +50,9 @@ export function flipCell(row: number, column: number): GridAction {
 		column: column,
 	}
 }
+
+export function toggleRunning(): GridAction {
+	return {
+		type: GridActionTypes.TOGGLE_RUNNING,
+	}
+}

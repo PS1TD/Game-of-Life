@@ -1,6 +1,7 @@
 interface GridState {
 	grid: boolean[][]
 	size: number
+	running: boolean
 }
 
 export enum GridActionTypes {
@@ -11,6 +12,7 @@ export enum GridActionTypes {
 	ADD_ROWS = "ADD_ROWS",
 	ADD_COLUMNS = "ADD_COLUMNS",
 	FLIP_CELL = "FLIP_CELL",
+	TOGGLE_RUNNING = "TOGGLE_RUNNING",
 }
 
 interface SetGridAction {
@@ -50,6 +52,10 @@ interface FlipCellGridAction {
 	column: number
 }
 
+interface ToggleRunningGridAction {
+	type: GridActionTypes.TOGGLE_RUNNING
+}
+
 export type GridAction =
 	| SetGridAction
 	| UpsizeGridAction
@@ -58,10 +64,12 @@ export type GridAction =
 	| AddRowsGridAction
 	| AddColumnsGridAction
 	| FlipCellGridAction
+	| ToggleRunningGridAction
 
 const initialState: GridState = {
 	grid: [],
 	size: 50,
+	running: false,
 }
 
 export const gridReducer = (state = initialState, action: GridAction): GridState => {
@@ -169,6 +177,10 @@ export const gridReducer = (state = initialState, action: GridAction): GridState
 			newGrid[action.row]![action.column] = !newGrid[action.row]![action.column]
 
 			return { ...state, grid: newGrid }
+		}
+
+		case GridActionTypes.TOGGLE_RUNNING: {
+			return { ...state, running: !state.running }
 		}
 
 		default:

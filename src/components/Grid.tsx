@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import { useActions } from "../redux/hooks/useActions"
 import { useTypedSelector } from "../redux/hooks/useTypedSelector"
 import Cell from "./Cell"
@@ -6,7 +6,7 @@ import Cell from "./Cell"
 export default function Grid() {
 	const EXPAND_BY = 10
 
-	const { grid, size } = useTypedSelector((state) => state.grid)
+	const { grid, size, running } = useTypedSelector((state) => state.grid)
 
 	const { upsizeGrid, addRows, addColumns } = useActions()
 
