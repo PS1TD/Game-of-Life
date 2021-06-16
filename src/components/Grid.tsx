@@ -1,25 +1,19 @@
 import React, { useEffect, useRef, useState } from "react"
+import { useActions } from "../redux/hooks/useActions"
+import { useTypedSelector } from "../redux/hooks/useTypedSelector"
 import Cell from "./Cell"
 
 export default function Grid() {
-	type NonEmptyArray<T> = [T, ...T[]]
-
 	const EXPAND_BY = 10
+
+	const { grid, size } = useTypedSelector((state) => state.grid)
+
+	const { upsizeGrid, addRows, addColumns } = useActions()
 
 	const [windowSize, setWindowSize] = useState({
 		width: 0,
 		height: 0,
 	})
-
-	const [cellSize, setCellSize] = useState(100)
-
-	const [rows, setRows] = useState(Math.ceil(window.innerHeight / cellSize))
-	const [columns, setColumns] = useState(Math.ceil(window.innerWidth / cellSize))
-
-	const [grid, setGrid] = useState<Array<Array<boolean>>>(Array.from(Array(rows), () => Array(columns).fill(false)))
-
-	const rowLoader = useRef<HTMLDivElement>(null)
-	const columnLoader = useRef<HTMLDivElement>(null)
 
 	useEffect(() => {
 		function handleResize() {
@@ -34,10 +28,20 @@ export default function Grid() {
 	}, [])
 
 	useEffect(() => {
-		console.log("WINDOW SIZE CHANGED")
-		setRows((rows) => Math.max(rows, Math.ceil(windowSize.height / cellSize)))
-		setColumns((columns) => Math.max(columns, Math.ceil(windowSize.width / cellSize)))
+		let currentRows = grid.length
+		let currentColumns = 0
+		if (grid[0] !== undefined) {
+			currentColumns = grid[0].length
+		}
+
+		upsizeGrid(
+			Math.max(currentRows, Math.ceil(window.innerHeight / size)),
+			Math.max(currentColumns, Math.ceil(window.innerWidth / size))
+		)
 	}, [windowSize])
+
+	const rowLoader = useRef<HTMLDivElement>(null)
+	const columnLoader = useRef<HTMLDivElement>(null)
 
 	useEffect(() => {
 		var options = {
@@ -52,60 +56,13 @@ export default function Grid() {
 		}
 	}, [])
 
-	useEffect(() => {
-		// setGrid((grid) => {
-		// 	grid.length = rows
-
-		// 	console.log(grid)
-
-		// 	let counter = 0
-		// 	grid.forEach(() => counter++)
-		// 	console.log(counter)
-		// 	return grid
-		// })
-
-		setGrid((grid) => {
-			const newGrid = Array.from(Array(rows), () => Array(columns).fill(false))
-
-			let i = 0
-			grid.forEach((row) => {
-				let j = 0
-				row.forEach((cell) => {
-					newGrid[i]![j] = cell
-					j++
-				})
-				i++
-			})
-
-			return newGrid
-		})
-	}, [rows])
-
-	useEffect(() => {
-		setGrid((grid) => {
-			const newGrid = Array.from(Array(rows), () => Array(columns).fill(false))
-
-			let i = 0
-			grid.forEach((row) => {
-				let j = 0
-				row.forEach((cell) => {
-					newGrid[i]![j] = cell
-					j++
-				})
-				i++
-			})
-
-			return newGrid
-		})
-	}, [columns])
-
 	const handleObserver = (entities: IntersectionObserverEntry[]) => {
 		entities.forEach((entity: IntersectionObserverEntry) => {
 			if (entity.isIntersecting) {
 				if (entity.target.id === "rowLoader") {
-					setRows((rows) => rows + EXPAND_BY)
+					addRows(EXPAND_BY)
 				} else if (entity.target.id === "columnLoader") {
-					setColumns((columns) => columns + EXPAND_BY)
+					addColumns(EXPAND_BY)
 				}
 			}
 		})
@@ -113,7 +70,19 @@ export default function Grid() {
 
 	return (
 		<>
-			<div className="flex flex-col" style={{ width: `${columns * cellSize}px` }}>
+			<div
+				className="flex flex-col"
+				style={{
+					width: `${() => {
+						let currentColumns = 0
+						if (grid[0] !== undefined) {
+							currentColumns = grid[0].length
+						}
+
+						return currentColumns * size
+					}}px`,
+				}}
+			>
 				<div className="flex">
 					<div>
 						{grid.map((row, r) => {
@@ -122,7 +91,7 @@ export default function Grid() {
 									<div key={r} className="flex">
 										{row.map((cell, c) => {
 											{
-												return <Cell key={r + "-" + c} row={r} column={c} size={cellSize} />
+												return <Cell key={r + "-" + c} row={r} column={c} />
 											}
 										})}
 									</div>

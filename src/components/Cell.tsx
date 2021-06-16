@@ -1,14 +1,23 @@
 import React from "react"
+import { useActions } from "../redux/hooks/useActions"
+import { useTypedSelector } from "../redux/hooks/useTypedSelector"
 
 type CellProps = {
 	row: number
 	column: number
-	size: number
 }
 
-export default function Cell({ row, column, size }: CellProps) {
+export default function Cell({ row, column }: CellProps) {
+	const { size } = useTypedSelector((state) => state.grid)
+
+	const { flipCell } = useActions()
+
 	return (
-		<div className="inline-block bg-gray-200 border border-gray-500" style={{ width: `${size}px`, height: `${size}px` }}>
+		<div
+			className="inline-block bg-gray-200 border border-gray-500"
+			style={{ width: `${size}px`, height: `${size}px` }}
+			onClick={() => flipCell(row, column)}
+		>
 			{row}-{column}
 		</div>
 	)
