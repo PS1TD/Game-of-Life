@@ -6,6 +6,7 @@ interface GridState {
 export enum GridActionTypes {
 	SET_GRID = "SET_GRID",
 	UPSIZE_GRID = "UPSIZE_GRID",
+	DOWNSIZE_GRID = "DOWNSIZE_GRID",
 	CLEAR_GRID = "CLEAR_GRID",
 	ADD_ROWS = "ADD_ROWS",
 	ADD_COLUMNS = "ADD_COLUMNS",
@@ -19,6 +20,12 @@ interface SetGridAction {
 
 interface UpsizeGridAction {
 	type: GridActionTypes.UPSIZE_GRID
+	rows: number
+	columns: number
+}
+
+interface DownsizeGridAction {
+	type: GridActionTypes.DOWNSIZE_GRID
 	rows: number
 	columns: number
 }
@@ -43,7 +50,14 @@ interface FlipCellGridAction {
 	column: number
 }
 
-export type GridAction = SetGridAction | UpsizeGridAction | ClearGridAction | AddRowsGridAction | AddColumnsGridAction | FlipCellGridAction
+export type GridAction =
+	| SetGridAction
+	| UpsizeGridAction
+	| DownsizeGridAction
+	| ClearGridAction
+	| AddRowsGridAction
+	| AddColumnsGridAction
+	| FlipCellGridAction
 
 const initialState: GridState = {
 	grid: [],
@@ -80,6 +94,27 @@ export const gridReducer = (state = initialState, action: GridAction): GridState
 		}
 
 		// x2
+		case GridActionTypes.DOWNSIZE_GRID: {
+			let newGrid = Array.from(Array(action.rows), () => Array(action.columns).fill(false))
+
+			let i = 0
+			newGrid.forEach((row) => {
+				let j = 0
+				row.forEach(() => {
+					newGrid[i]![j] = state.grid[i]![j]
+
+					j++
+				})
+
+				i++
+			})
+
+			console.log(newGrid)
+
+			return { ...state, grid: newGrid }
+		}
+
+		// x3
 		case GridActionTypes.CLEAR_GRID: {
 			let newGrid = state.grid
 
@@ -95,7 +130,7 @@ export const gridReducer = (state = initialState, action: GridAction): GridState
 
 			return { ...state, grid: newGrid }
 		}
-		// x3
+		// x4
 		case GridActionTypes.ADD_ROWS: {
 			let newGrid = Array.from(Array(state.grid.length + action.by), () => Array(state.grid[0]!.length).fill(false))
 
@@ -111,7 +146,7 @@ export const gridReducer = (state = initialState, action: GridAction): GridState
 
 			return { ...state, grid: newGrid }
 		}
-		// x4
+		// x5
 		case GridActionTypes.ADD_COLUMNS: {
 			let newGrid = Array.from(Array(state.grid.length), () => Array(state.grid[0]!.length + action.by).fill(false))
 
@@ -127,7 +162,7 @@ export const gridReducer = (state = initialState, action: GridAction): GridState
 
 			return { ...state, grid: newGrid }
 		}
-		// x5
+		// x6
 		case GridActionTypes.FLIP_CELL: {
 			let newGrid = state.grid
 

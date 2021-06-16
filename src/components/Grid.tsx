@@ -89,7 +89,7 @@ export default function Grid() {
 							{
 								return (
 									<div key={r} className="flex">
-										{row.map((cell, c) => {
+										{row.map((_, c) => {
 											{
 												return <Cell key={r + "-" + c} row={r} column={c} />
 											}

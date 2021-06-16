@@ -8,13 +8,13 @@ type CellProps = {
 }
 
 export default function Cell({ row, column }: CellProps) {
-	const { size } = useTypedSelector((state) => state.grid)
+	const { size, grid } = useTypedSelector((state) => state.grid)
 
 	const { flipCell } = useActions()
 
 	return (
 		<div
-			className="inline-block bg-gray-200 border border-gray-500"
+			className={`inline-block ${grid[row]![column] ? "bg-green-500" : "bg-gray-200"} border border-gray-500`}
 			style={{ width: `${size}px`, height: `${size}px` }}
 			onClick={() => flipCell(row, column)}
 		>

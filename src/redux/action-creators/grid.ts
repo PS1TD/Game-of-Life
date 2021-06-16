@@ -21,6 +21,14 @@ export function upsizeGrid(rows: number, columns: number): GridAction {
 	}
 }
 
+export function downsizeGrid(rows: number, columns: number): GridAction {
+	return {
+		type: GridActionTypes.DOWNSIZE_GRID,
+		rows: rows,
+		columns: columns,
+	}
+}
+
 export function addRows(by: number): GridAction {
 	return {
 		type: GridActionTypes.ADD_ROWS,
