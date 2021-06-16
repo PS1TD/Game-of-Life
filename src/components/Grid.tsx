@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useState } from "react"
 import Cell from "./Cell"
 
 export default function Grid() {
-	const [rows, setRows] = useState(1)
-	const [columns, setColumns] = useState(2)
+	const [rows, setRows] = useState(10)
+	const [columns, setColumns] = useState(20)
 
 	const [grid, setGrid] = useState<Array<Array<boolean>>>(Array.from(Array(rows), () => Array(columns).fill(false)))
 
 	const rowLoader = useRef(null)
+	const columnLoader = useRef(null)
 
 	useEffect(() => {
 		var options = {
@@ -15,9 +16,10 @@ export default function Grid() {
 			rootMargin: "20px",
 			threshold: 0,
 		}
-		const rowObserver = new IntersectionObserver(handleRowObserver, options)
-		if (rowLoader.current) {
-			rowObserver.observe(rowLoader.current!)
+		const observer = new IntersectionObserver(handleObserver, options)
+		if (rowLoader.current && columnLoader.current) {
+			observer.observe(rowLoader.current!)
+			observer.observe(columnLoader.current!)
 		}
 	}, [])
 
@@ -27,41 +29,25 @@ export default function Grid() {
 		setGrid(newGrid)
 	}, [rows])
 
-	const handleRowObserver = (entities: any) => {
-		const target = entities[0]
-		console.log(target)
-		if (target.isIntersecting) {
-			console.log("ROWS HIT")
-			setRows((rows) => rows + 10)
-		}
-	}
-
-	const columnLoader = useRef(null)
-
-	useEffect(() => {
-		var options = {
-			root: null,
-			rootMargin: "20px",
-			threshold: 0,
-		}
-		const columnObserver = new IntersectionObserver(handleColumnObserver, options)
-		if (columnLoader.current) {
-			columnObserver.observe(columnLoader.current!)
-		}
-	}, [])
-
 	useEffect(() => {
 		console.log("ADD MORE COLUMNS")
 		const newGrid = Array.from(Array(rows), () => Array(columns).fill(false))
 		setGrid(newGrid)
 	}, [columns])
 
-	const handleColumnObserver = (entities: any) => {
-		const target = entities[0]
-		if (target.isIntersecting) {
-			console.log("COLUMNS HIT")
-			setColumns((columns) => columns + 10)
-		}
+	const handleObserver = (entities: any) => {
+		console.log(entities)
+		entities.forEach((entity: any) => {
+			if (entity.isIntersecting) {
+				if (entity.target.id === "rowLoader") {
+					console.log("ROWS HIT")
+					setRows((rows) => rows + 10)
+				} else if (entity.target.id === "columnLoader") {
+					console.log("COLUMNS HIT")
+					setColumns((columns) => columns + 10)
+				}
+			}
+		})
 	}
 
 	return (
@@ -72,7 +58,7 @@ export default function Grid() {
 						{grid.map((row, r) => {
 							{
 								return (
-									<div className="flex">
+									<div key={r} className="flex">
 										{row.map((cell, c) => {
 											{
 												return <Cell key={r + "-" + c} row={r} column={c} />
@@ -83,9 +69,9 @@ export default function Grid() {
 							}
 						})}
 					</div>
-					<div ref={columnLoader}></div>
+					<div id="columnLoader" ref={columnLoader}></div>
 				</div>
-				<div className="flex" ref={rowLoader}></div>
+				<div id="rowLoader" className="flex" ref={rowLoader}></div>
 			</div>
 		</>
 	)
