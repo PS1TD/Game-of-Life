@@ -2,12 +2,16 @@ import React, { useEffect, useRef, useState } from "react"
 import Cell from "./Cell"
 
 export default function Grid() {
+	type NonEmptyArray<T> = [T, ...T[]]
+
+	const EXPAND_BY = 10
+
 	const [windowSize, setWindowSize] = useState({
 		width: 0,
 		height: 0,
 	})
 
-	const [cellSize, setCellSize] = useState(50)
+	const [cellSize, setCellSize] = useState(100)
 
 	const [rows, setRows] = useState(Math.ceil(window.innerHeight / cellSize))
 	const [columns, setColumns] = useState(Math.ceil(window.innerWidth / cellSize))
@@ -38,7 +42,7 @@ export default function Grid() {
 	useEffect(() => {
 		var options = {
 			root: null,
-			rootMargin: "20px",
+			rootMargin: "30px",
 			threshold: 0,
 		}
 		const observer = new IntersectionObserver(handleObserver, options)
@@ -49,22 +53,59 @@ export default function Grid() {
 	}, [])
 
 	useEffect(() => {
-		const newGrid = Array.from(Array(rows), () => Array(columns).fill(false))
-		setGrid(newGrid)
+		// setGrid((grid) => {
+		// 	grid.length = rows
+
+		// 	console.log(grid)
+
+		// 	let counter = 0
+		// 	grid.forEach(() => counter++)
+		// 	console.log(counter)
+		// 	return grid
+		// })
+
+		setGrid((grid) => {
+			const newGrid = Array.from(Array(rows), () => Array(columns).fill(false))
+
+			let i = 0
+			grid.forEach((row) => {
+				let j = 0
+				row.forEach((cell) => {
+					newGrid[i]![j] = cell
+					j++
+				})
+				i++
+			})
+
+			return newGrid
+		})
 	}, [rows])
 
 	useEffect(() => {
-		const newGrid = Array.from(Array(rows), () => Array(columns).fill(false))
-		setGrid(newGrid)
+		setGrid((grid) => {
+			const newGrid = Array.from(Array(rows), () => Array(columns).fill(false))
+
+			let i = 0
+			grid.forEach((row) => {
+				let j = 0
+				row.forEach((cell) => {
+					newGrid[i]![j] = cell
+					j++
+				})
+				i++
+			})
+
+			return newGrid
+		})
 	}, [columns])
 
 	const handleObserver = (entities: IntersectionObserverEntry[]) => {
 		entities.forEach((entity: IntersectionObserverEntry) => {
 			if (entity.isIntersecting) {
 				if (entity.target.id === "rowLoader") {
-					setRows((rows) => rows + 10)
+					setRows((rows) => rows + EXPAND_BY)
 				} else if (entity.target.id === "columnLoader") {
-					setColumns((columns) => columns + 10)
+					setColumns((columns) => columns + EXPAND_BY)
 				}
 			}
 		})
