@@ -4,6 +4,7 @@ import { useTypedSelector } from "../redux/hooks/useTypedSelector"
 
 export default function Dashboard() {
 	const { size, running } = useTypedSelector((state) => state.grid)
+	const { speed } = useTypedSelector((state) => state.settings)
 
 	const { toggleRunning, downsizeGrid, clearGrid } = useActions()
 
@@ -17,7 +18,7 @@ export default function Dashboard() {
 
 		console.log("1 SEC")
 
-		setTimeout(runSimulation, 1000)
+		setTimeout(runSimulation, speed)
 	}, [])
 
 	useEffect(() => {
