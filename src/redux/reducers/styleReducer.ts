@@ -23,9 +23,9 @@ interface UpdateStyleAction {
 export type StyleAction = ResetStyleAction | UpdateStyleAction
 
 const initialState: StyleState = {
-	aliveColor: "00FF00",
-	deadColor: "FFFFFF",
-	borderColor: "000000",
+	aliveColor: "#34d399",
+	deadColor: "#e5e7eb",
+	borderColor: "#6b7280",
 }
 
 export const styleReducer = (state = initialState, action: StyleAction): StyleState => {

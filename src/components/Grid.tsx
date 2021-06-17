@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { useActions } from "../redux/hooks/useActions"
 import { useTypedSelector } from "../redux/hooks/useTypedSelector"
 import Cell from "./Cell"

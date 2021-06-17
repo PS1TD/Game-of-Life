@@ -1,5 +1,3 @@
-import produce from "immer"
-
 interface GridState {
 	grid: boolean[][]
 }
