@@ -8,7 +8,6 @@ interface StyleState {
 export enum StyleActionTypes {
 	RESET_STYLES = "RESET_STYLES",
 	UPDATE_STYLES = "UPDATE_STYLES",
-	TOGGLE_BORDER = "TOGGLE_BORDER",
 }
 
 interface ResetStyleAction {
@@ -17,16 +16,13 @@ interface ResetStyleAction {
 
 interface UpdateStyleAction {
 	type: StyleActionTypes.UPDATE_STYLES
-	deadColor: string | null
-	aliveColor: string | null
-	borderColor: string | null
+	deadColor: string | undefined
+	aliveColor: string | undefined
+	borderColor: string | undefined
+	border: boolean | undefined
 }
 
-interface ToggleBorderStyleAction {
-	type: StyleActionTypes.TOGGLE_BORDER
-}
-
-export type StyleAction = ResetStyleAction | UpdateStyleAction | ToggleBorderStyleAction
+export type StyleAction = ResetStyleAction | UpdateStyleAction
 
 const initialState: StyleState = {
 	aliveColor: "#34d399",
@@ -39,11 +35,15 @@ export const styleReducer = (state = initialState, action: StyleAction): StyleSt
 	switch (action.type) {
 		case StyleActionTypes.RESET_STYLES:
 			return { ...state, ...initialState }
-		case StyleActionTypes.UPDATE_STYLES:
-			return state
-
-		case StyleActionTypes.TOGGLE_BORDER:
-			return state
+		case StyleActionTypes.UPDATE_STYLES: {
+			return {
+				...state,
+				aliveColor: action.aliveColor ?? state.aliveColor,
+				deadColor: action.deadColor ?? state.deadColor,
+				borderColor: action.borderColor ?? state.borderColor,
+				border: action.border ?? state.border,
+			}
+		}
 
 		default:
 			return state

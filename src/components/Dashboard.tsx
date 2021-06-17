@@ -10,6 +10,7 @@ export default function Dashboard() {
 	const { toggleRunning, downsizeGrid, clearGrid, simulateGrid } = useActions()
 
 	const [showSettings, setShowSettings] = useState(false)
+	const [showStyles, setShowStyles] = useState(false)
 
 	const runningRef = useRef(running)
 	runningRef.current = running
@@ -111,7 +112,13 @@ export default function Dashboard() {
 				</div>
 				<div className="flex space-x-8">
 					<div className="relative">
-						<button className="bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 focus:outline-none p-4 rounded-full pointer-events-auto">
+						<button
+							onClick={() => {
+								setShowStyles(!showStyles)
+								setShowSettings(false)
+							}}
+							className="bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 focus:outline-none p-4 rounded-full pointer-events-auto"
+						>
 							<div className="flex flex-row justify-center items-center">
 								<svg
 									className=" h10 w-10 fill-current "
@@ -125,11 +132,14 @@ export default function Dashboard() {
 								<span className="ml-6 mr-2">STYLES</span>
 							</div>
 						</button>
-						{/* <Styles /> */}
+						{showStyles && <Styles />}
 					</div>
 					<div className="relative">
 						<button
-							onClick={() => setShowSettings(!showSettings)}
+							onClick={() => {
+								setShowSettings(!showSettings)
+								setShowStyles(false)
+							}}
 							className="bg-indigo-400 focus:outline-none p-4 rounded-full pointer-events-auto"
 						>
 							<div className="flex flex-row justify-center items-center">

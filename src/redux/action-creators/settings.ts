@@ -19,3 +19,9 @@ export function setSize(size: number): SettingsAction {
 		size: size,
 	}
 }
+
+export function resetSettings(): SettingsAction {
+	return {
+		type: SettingsActionTypes.RESET_SETTINGS,
+	}
+}

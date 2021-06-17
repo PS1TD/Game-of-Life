@@ -8,6 +8,7 @@ export enum SettingsActionTypes {
 	SET_SPEED = "SET_SPEED",
 	TOGGLE_RUNNING = "TOGGLE_RUNNING",
 	SET_SIZE = "SET_SIZE",
+	RESET_SETTINGS = "RESET_SETTINGS",
 }
 
 interface ToggleRunningSettingsAction {
@@ -24,10 +25,14 @@ interface SetSizeSettingsAction {
 	size: number
 }
 
-export type SettingsAction = ToggleRunningSettingsAction | SetSpeedSettingsAction | SetSizeSettingsAction
+interface ResetSettingsAction {
+	type: SettingsActionTypes.RESET_SETTINGS
+}
+
+export type SettingsAction = ToggleRunningSettingsAction | SetSpeedSettingsAction | SetSizeSettingsAction | ResetSettingsAction
 
 const initialState: SettingsState = {
-	speed: 1,
+	speed: 200,
 	size: 40,
 	running: false,
 }
@@ -43,6 +48,9 @@ export const settingsReducer = (state = initialState, action: SettingsAction): S
 
 		case SettingsActionTypes.SET_SIZE:
 			return { ...state, size: action.size }
+
+		case SettingsActionTypes.RESET_SETTINGS:
+			return { ...state, ...initialState }
 
 		default:
 			return state

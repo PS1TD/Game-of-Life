@@ -6,8 +6,12 @@ export function resetStyles(): StyleAction {
 	}
 }
 
-export function toggleBorder(): StyleAction {
+export function updateStyles(aliveColor?: string, deadColor?: string, borderColor?: string, border?: boolean): StyleAction {
 	return {
-		type: StyleActionTypes.TOGGLE_BORDER,
+		type: StyleActionTypes.UPDATE_STYLES,
+		aliveColor: aliveColor,
+		deadColor: deadColor,
+		borderColor: borderColor,
+		border: border,
 	}
 }

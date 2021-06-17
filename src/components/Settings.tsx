@@ -6,7 +6,7 @@ export default function Settings() {
 	const { grid } = useTypedSelector((state) => state.grid)
 	const { speed, size } = useTypedSelector((state) => state.settings)
 
-	const { setSpeed, setSize, upsizeGrid } = useActions()
+	const { setSpeed, setSize, upsizeGrid, resetSettings } = useActions()
 
 	const [stateSpeed, setStateSpeed] = useState(speed)
 	const [stateSize, setStateSize] = useState(size)
@@ -53,8 +53,18 @@ export default function Settings() {
 		)
 	}
 
+	const handleReset = (e: MouseEvent<HTMLButtonElement>) => {
+		e.preventDefault()
+		resetSettings()
+		setStateSize(40)
+		setStateSpeed(200)
+	}
+
 	return (
-		<div className="absolute -top-56 w-96 -left-48 bg-gray-100 rounded-2xl pointer-events-auto p-4 text-lg font-semibold">
+		<div
+			className="absolute w-96 -left-48 bg-gray-100 rounded-2xl pointer-events-auto p-4 text-lg font-semibold"
+			style={{ top: "-220px" }}
+		>
 			<form>
 				<div className="flex justify-between ">
 					<label>Iteration Time: </label>
@@ -84,9 +94,14 @@ export default function Settings() {
 					step="5"
 				/>
 
-				<button className="w-full rounded-2xl bg-green-400 text-base" onClick={handleSubmit}>
-					SAVE
-				</button>
+				<div className="flex space-x-4">
+					<button className="w-full rounded-2xl bg-green-400 text-base focus:outline-none" onClick={handleSubmit}>
+						SAVE
+					</button>
+					<button className="w-full rounded-2xl bg-red-400 text-base focus:outline-none" onClick={handleReset}>
+						RESET TO DEFAULT
+					</button>
+				</div>
 			</form>
 		</div>
 	)
