@@ -3,10 +3,9 @@ import { useActions } from "../redux/hooks/useActions"
 import { useTypedSelector } from "../redux/hooks/useTypedSelector"
 
 export default function Dashboard() {
-	const { size, running } = useTypedSelector((state) => state.grid)
-	const { speed } = useTypedSelector((state) => state.settings)
+	const { running, speed, size } = useTypedSelector((state) => state.settings)
 
-	const { toggleRunning, downsizeGrid, clearGrid } = useActions()
+	const { toggleRunning, downsizeGrid, clearGrid, simulateGrid } = useActions()
 
 	const runningRef = useRef(running)
 	runningRef.current = running
@@ -16,7 +15,7 @@ export default function Dashboard() {
 			return
 		}
 
-		console.log("1 SEC")
+		simulateGrid()
 
 		setTimeout(runSimulation, speed)
 	}, [])
@@ -47,8 +46,6 @@ export default function Dashboard() {
 				</button>
 				<button
 					onClick={() => {
-						console.log(Math.ceil(window.innerHeight / size))
-						console.log(Math.ceil(window.innerWidth / size))
 						downsizeGrid(Math.ceil(window.innerHeight / size), Math.ceil(window.innerWidth / size))
 					}}
 					className="bg-red-400 p-6 rounded-full pointer-events-auto"

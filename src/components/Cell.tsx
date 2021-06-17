@@ -8,7 +8,8 @@ type CellProps = {
 }
 
 export default function Cell({ row, column }: CellProps) {
-	const { size, grid } = useTypedSelector((state) => state.grid)
+	const { grid } = useTypedSelector((state) => state.grid)
+	const { size } = useTypedSelector((state) => state.settings)
 
 	const { flipCell } = useActions()
 

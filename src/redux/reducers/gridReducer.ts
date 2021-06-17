@@ -1,7 +1,7 @@
+import produce from "immer"
+
 interface GridState {
 	grid: boolean[][]
-	size: number
-	running: boolean
 }
 
 export enum GridActionTypes {
@@ -12,7 +12,7 @@ export enum GridActionTypes {
 	ADD_ROWS = "ADD_ROWS",
 	ADD_COLUMNS = "ADD_COLUMNS",
 	FLIP_CELL = "FLIP_CELL",
-	TOGGLE_RUNNING = "TOGGLE_RUNNING",
+	SIMULATE = "SIMULATE",
 }
 
 interface SetGridAction {
@@ -52,8 +52,8 @@ interface FlipCellGridAction {
 	column: number
 }
 
-interface ToggleRunningGridAction {
-	type: GridActionTypes.TOGGLE_RUNNING
+interface SimulateGridAction {
+	type: GridActionTypes.SIMULATE
 }
 
 export type GridAction =
@@ -64,12 +64,10 @@ export type GridAction =
 	| AddRowsGridAction
 	| AddColumnsGridAction
 	| FlipCellGridAction
-	| ToggleRunningGridAction
+	| SimulateGridAction
 
 const initialState: GridState = {
 	grid: [],
-	size: 50,
-	running: false,
 }
 
 export const gridReducer = (state = initialState, action: GridAction): GridState => {
@@ -117,14 +115,16 @@ export const gridReducer = (state = initialState, action: GridAction): GridState
 				i++
 			})
 
-			console.log(newGrid)
-
 			return { ...state, grid: newGrid }
 		}
 
 		// x3
 		case GridActionTypes.CLEAR_GRID: {
-			let newGrid = state.grid
+			let newGrid: Array<Array<boolean>> = []
+
+			state.grid.forEach((row) => {
+				newGrid.push(row.slice())
+			})
 
 			let i = 0
 			state.grid.forEach((row) => {
@@ -172,15 +172,68 @@ export const gridReducer = (state = initialState, action: GridAction): GridState
 		}
 		// x6
 		case GridActionTypes.FLIP_CELL: {
-			let newGrid = state.grid
+			let newGrid: Array<Array<boolean>> = []
 
-			newGrid[action.row]![action.column] = !newGrid[action.row]![action.column]
+			state.grid.forEach((row) => {
+				newGrid.push(row.slice())
+			})
+
+			newGrid[action.row]![action.column] = !state.grid[action.row]![action.column]
 
 			return { ...state, grid: newGrid }
 		}
 
-		case GridActionTypes.TOGGLE_RUNNING: {
-			return { ...state, running: !state.running }
+		// x7
+		case GridActionTypes.SIMULATE: {
+			const positions = [
+				[0, 1],
+				[0, -1],
+				[1, -1],
+				[-1, 1],
+				[1, 1],
+				[-1, -1],
+				[1, 0],
+				[-1, 0],
+			]
+
+			let newGrid: Array<Array<boolean>> = []
+
+			state.grid.forEach((row) => {
+				newGrid.push(row.slice())
+			})
+
+			let currentRows = state.grid.length
+			let currentColumns = 0
+			if (state.grid[0] !== undefined) {
+				currentColumns = state.grid[0].length
+			}
+
+			for (let r = 0; r < currentRows; r++) {
+				for (let c = 0; c < currentColumns; c++) {
+					let neighbours = 0
+
+					// if (state.grid[r]![c]) {
+					// 	neighbours = 1
+					// }
+
+					positions.forEach(([i, j]) => {
+						let newRow = r + i!
+						let newCol = c + j!
+						if (newRow >= 0 && newRow < currentRows && newCol >= 0 && newCol < currentColumns) {
+							if (state.grid[newRow]![newCol]) {
+								neighbours++
+							}
+						}
+					})
+					if (neighbours < 2 || neighbours > 3) {
+						newGrid[r]![c] = false
+					} else if (state.grid[r]![c] === false && neighbours === 3) {
+						newGrid[r]![c] = true
+					}
+				}
+			}
+
+			return { ...state, grid: newGrid }
 		}
 
 		default:

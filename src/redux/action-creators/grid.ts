@@ -51,8 +51,8 @@ export function flipCell(row: number, column: number): GridAction {
 	}
 }
 
-export function toggleRunning(): GridAction {
+export function simulateGrid(): GridAction {
 	return {
-		type: GridActionTypes.TOGGLE_RUNNING,
+		type: GridActionTypes.SIMULATE,
 	}
 }

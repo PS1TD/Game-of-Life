@@ -6,7 +6,8 @@ import Cell from "./Cell"
 export default function Grid() {
 	const EXPAND_BY = 10
 
-	const { grid, size, running } = useTypedSelector((state) => state.grid)
+	const { grid } = useTypedSelector((state) => state.grid)
+	const { size } = useTypedSelector((state) => state.settings)
 
 	const { upsizeGrid, addRows, addColumns } = useActions()
 
