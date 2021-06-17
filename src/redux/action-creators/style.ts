@@ -5,3 +5,9 @@ export function resetStyles(): StyleAction {
 		type: StyleActionTypes.RESET_STYLES,
 	}
 }
+
+export function toggleBorder(): StyleAction {
+	return {
+		type: StyleActionTypes.TOGGLE_BORDER,
+	}
+}

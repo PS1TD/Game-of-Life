@@ -10,13 +10,13 @@ type CellProps = {
 export default function Cell({ row, column }: CellProps) {
 	const { grid } = useTypedSelector((state) => state.grid)
 	const { size } = useTypedSelector((state) => state.settings)
-	const { aliveColor, borderColor, deadColor } = useTypedSelector((state) => state.style)
+	const { aliveColor, borderColor, deadColor, border } = useTypedSelector((state) => state.style)
 
 	const { flipCell } = useActions()
 
 	return (
 		<div
-			className={`inline-block  border`}
+			className={`inline-block  ${border && "border"}`}
 			style={{
 				width: `${size}px`,
 				height: `${size}px`,
@@ -24,8 +24,6 @@ export default function Cell({ row, column }: CellProps) {
 				borderColor: borderColor,
 			}}
 			onClick={() => flipCell(row, column)}
-		>
-			{/* {row}-{column} */}
-		</div>
+		></div>
 	)
 }
