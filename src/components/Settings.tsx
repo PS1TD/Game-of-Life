@@ -73,7 +73,7 @@ export default function Settings() {
 				<input
 					className="appearance-none w-full rounded-2xl mb-4"
 					type="range"
-					min="100"
+					min="50"
 					max="5000"
 					value={stateSpeed}
 					onChange={handleSpeedChange}
